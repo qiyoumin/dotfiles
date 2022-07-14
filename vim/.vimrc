@@ -1,7 +1,3 @@
-" Comments in Vimscript start with a `"`.
-
-" If you open this file in Vim, it'll be syntax highlighted for you.
-
 " Vim is based on Vi. Setting `nocompatible` switches from the default
 " Vi-compatibility mode and enables useful Vim functionality. This
 " configuration option turns out not to be necessary for the file named
@@ -52,23 +48,40 @@ set noerrorbells visualbell t_vb=
 
 " Enable mouse support. You should avoid relying on this too much, but it can
 " sometimes be convenient.
-set mouse+=a
-set mouse=r
+set mouse=a
 
 
 " open new split panes to right and bottom, which feels more natural
 set splitbelow
 set splitright
 
-" quicker window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
 
 " show matching braces when text indicator is over them / highlight matching {}()
 set showmatch
 
+
+" Enable copying from vim to the system-clipboard
+" set clipboard=unnamedplus
+" set clipboard=unnamed
+
+
+" Set shift width to 4 spaces
+set shiftwidth=4
+
+" Set tab width to 4 columns
+set tabstop=4
+
+" Use space characters instead of tabs, prevent from different tab size with others
+set expandtab
+
+" press one <Backspace> removes a tab size, in according with tabstop=4
+set softtabstop=4
+
+" Set automatic indentation
+set autoindent
+
+" Do not let cursor scroll below or above N number of lines when scrolling.
+set scrolloff=5
 
 
 """""""""""""""
@@ -86,3 +99,47 @@ set incsearch
 
 " highlight matches
 set hlsearch
+
+" Searching 'tags' path
+set tags=./tags,./../tags,./*/tags
+
+
+"""""""""""""""
+" Wildmenu
+"""""""""""""""
+
+" Enable auto completion menu after pressing TAB
+set wildmenu
+
+" Make wildmenu behave like similar to Bash completion
+set wildmode=list:longest
+
+" There are certain files that we would never want to edit with Vim
+" Wildmenu will ignore files with these extensions
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+
+" Changing syntax Highlighting Color scheme
+colorscheme peachpuff
+
+
+
+"""""""""""""""""""
+" mapping keyboards
+"""""""""""""""""""
+
+" quicker window movement
+nnoremap <C-j> <C-w>j+pa
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Automatically closing braces
+inoremap {<CR> {<CR>}<Esc>ko<tab>
+inoremap ( ()<Esc>ha
+inoremap [ []<Esc>ha
+inoremap " ""<Esc>ha
+inoremap ' ''<Esc>ha
+inoremap ` ``<Esc>ha
+
+
