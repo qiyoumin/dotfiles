@@ -17,6 +17,6 @@ alias ll='ls -lrh'
 alias lla='ll -a'
 
 # git autocompletion
-if [ -f ~/.git-completion.bash ]; then 
-. ~/.git-completion.bash 
-fi 
+if [ -f /usr/share/bash-completion/completions/git ]; then
+  . /usr/share/bash-completion/completions/git
+fi

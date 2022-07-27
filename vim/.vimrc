@@ -61,21 +61,22 @@ set showmatch
 
 
 " Enable copying from vim to the system-clipboard
-" set clipboard=unnamedplus
-" set clipboard=unnamed
+set clipboard=unnamedplus " sets the default copy register to be +
+" set clipboard=unnamed " sets the default copy register to be *
 
 
-" Set shift width to 4 spaces
-set shiftwidth=4
 
-" Set tab width to 4 columns
-set tabstop=4
+" Set shift width to 2 spaces
+set shiftwidth=2
+
+" Set tab width to 2 columns
+set tabstop=2
 
 " Use space characters instead of tabs, prevent from different tab size with others
 set expandtab
 
-" press one <Backspace> removes a tab size, in according with tabstop=4
-set softtabstop=4
+" press one <Backspace> removes a tab size, in according with tabstop=2
+set softtabstop=2
 
 " Set automatic indentation
 set autoindent
@@ -141,4 +142,5 @@ inoremap [ []<Esc>ha
 inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
+
 
