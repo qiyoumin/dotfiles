@@ -102,7 +102,8 @@ set incsearch
 set hlsearch
 
 " Searching 'tags' path
-set tags=./tags,./../tags,./*/tags
+set tags=tags,./tags,./../tags,./*/tags
+set tags+=tags;/
 
 
 """""""""""""""
