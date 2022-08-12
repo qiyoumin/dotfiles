@@ -1,4 +1,9 @@
 
+# set the keybindings to vi mode.
+set -o vi
+bind -m vi-command 'Control-l: clear-screen'
+bind -m vi-insert  'Control-l: clear-screen'
+
 # git branch display
 function git_branch {
     branch="`git branch 2>/dev/null | grep "^\*" | sed -e "s/^\*\ //"`"
