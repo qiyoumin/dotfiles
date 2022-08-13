@@ -8,7 +8,10 @@
 set nocompatible
 
 " Turn on syntax highlighting.
-syntax on
+if has('syntax')
+  syntax enable
+  syntax on
+endif
 
 " Disable the default Vim startup message.
 set shortmess+=I
@@ -27,10 +30,7 @@ set relativenumber
 " Always show the status line at the bottom, even if you only have one window open.
 set laststatus=2
 
-" The backspace key has slightly unintuitive behavior by default. For example,
-" by default, you can't backspace before the insertion point set with 'i'.
-" This configuration makes backspace behave more reasonably, in that you can
-" backspace over anything.
+" makes backspace behave more reasonably, in that you can backspace over anything.
 set backspace=indent,eol,start
 
 " By default, Vim doesn't let you hide a buffer (i.e. have a buffer that isn't
@@ -59,12 +59,21 @@ set splitright
 " show matching braces when text indicator is over them / highlight matching {}()
 set showmatch
 
+" show times matching braces
+set matchtime=2
+
+" show last line
+set display=lastline
+
 
 " Enable copying from vim to the system-clipboard
 set clipboard=unnamedplus " sets the default copy register to be +
 " set clipboard=unnamed " sets the default copy register to be *
 
 
+"""""""""""""""
+" indent
+"""""""""""""""
 
 " Set shift width to 2 spaces
 set shiftwidth=2
@@ -84,6 +93,11 @@ set autoindent
 " Do not let cursor scroll below or above N number of lines when scrolling.
 set scrolloff=5
 
+" open c/c++ smart indent optimization
+set cindent
+
+" wrap messgaes to 72 columns for git commit messages
+" set textwidth=72
 
 """""""""""""""
 " Searching
@@ -102,15 +116,14 @@ set incsearch
 set hlsearch
 
 " Searching 'tags' path
-set tags=tags,./tags,./../tags,./*/tags
-set tags+=tags;/
+set tags=./tags;,tags
 
 
 """""""""""""""
 " Wildmenu
 """""""""""""""
 
-" Enable auto completion menu after pressing TAB
+" Enable auto completion menu after pressing tab
 set wildmenu
 
 " Make wildmenu behave like similar to Bash completion
@@ -119,10 +132,6 @@ set wildmode=list:longest
 " There are certain files that we would never want to edit with Vim
 " Wildmenu will ignore files with these extensions
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
-
-
-" Changing syntax Highlighting Color scheme
-colorscheme peachpuff
 
 
 
@@ -144,4 +153,96 @@ inoremap " ""<Esc>ha
 inoremap ' ''<Esc>ha
 inoremap ` ``<Esc>ha
 
+" mappings for managing tabs
+" map <leader>tn :tabnew<cr>
+" map <leader>to :tabOnly<cr>
+" map <leader>tc :tabclose<cr>
+" map <leader>tm :tabmove
+" map <leader>t<leader> :tabnext
 
+
+
+
+"""""""""""""""""""
+" style color
+"""""""""""""""""""
+
+" colorscheme (delek, peachpuff, desert, ron)
+:colorscheme desert
+
+" style color in tmux
+if &term =~ '256color' && $TMUX != ''
+  set t_ut=
+endif
+
+
+"""""""""""""""""""
+" tabline style
+"""""""""""""""""""
+
+set tabline=%!MyTabLine()  " custom tab pages line
+function! MyTabLine()
+  let s = ''
+  " loop through each tab page
+  for i in range(tabpagenr('$'))
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#' " WildMenu
+    else
+      let s .= '%#Title#'
+    endif
+    " set the tab page number (for mouse clicks)
+    let s .= '%' . (i + 1) . 'T '
+    " set page number string
+    let s .= i + 1 . ''
+    " get buffer names and statuses
+    let n = ''  " temp str for buf names
+    let m = 0   " &modified counter
+    let buflist = tabpagebuflist(i + 1)
+    " loop through each buffer in a tab
+    for b in buflist
+      if getbufvar(b, "&buftype") == 'help'
+        " let n .= '[H]' . fnamemodify(bufname(b), ':t:s/.txt$//')
+      elseif getbufvar(b, "&buftype") == 'quickfix'
+        " let n .= '[Q]'
+      elseif getbufvar(b, "&modifiable")
+        let n .= fnamemodify(bufname(b), ':t') . ', ' " pathshorten(bufname(b))
+      endif
+      if getbufvar(b, "&modified")
+        let m += 1
+      endif
+    endfor
+    " let n .= fnamemodify(bufname(buflist[tabpagewinnr(i + 1) - 1]), ':t')
+    let n = substitute(n, ', $', '', '')
+    " add modified label
+    if m > 0
+      let s .= '+'
+      " let s .= '[' . m . '+]'
+    endif
+    if i + 1 == tabpagenr()
+      let s .= ' %#TabLineSel#'
+    else
+      let s .= ' %#TabLine#'
+    endif
+    " add buffer names
+    if n == ''
+      let s.= '[New]'
+    else
+      let s .= n
+    endif
+    " switch to no underlining and add final space
+    let s .= ' '
+  endfor
+  let s .= '%#TabLineFill#%T'
+  " right-aligned close button
+  " if tabpagenr('$') > 1
+  "   let s .= '%=%#TabLineFill#%999Xclose'
+  " endif
+  return s
+endfunction
+
+:highlight TabLineFill term=reverse cterm=none ctermfg=246 ctermbg=251
