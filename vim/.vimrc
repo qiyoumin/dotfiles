@@ -1,3 +1,46 @@
+
+"""""""""""""""
+" plug
+"""""""""""""""
+
+" call plug#begin('~/.vim/plugged')
+call plug#begin()
+
+" a nice statusline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" insert or delete brackets, parens, quotes in pair.
+Plug 'jiangmiao/auto-pairs'
+
+" tags
+Plug 'ludovicchabant/vim-gutentags'
+
+" dynamic check syntax
+Plug 'dense-analysis/ale'
+
+" display the indention levels
+Plug 'Yggdroot/indentLine'
+
+" a tree file explorer
+Plug 'preservim/nerdtree'
+
+" show diff of git/svn
+Plug 'mhinz/vim-signify'
+
+" enhanced highlight
+Plug 'octol/vim-cpp-enhanced-heighlight'
+
+" code-completion
+Plug 'ycm-core/YouCompleteMe'
+
+call plug#end()
+
+so ~/.vim/plugins.vim
+
+"""""""""""""""
+" setting
+"""""""""""""""
 " Vim is based on Vi. Setting `nocompatible` switches from the default
 " Vi-compatibility mode and enables useful Vim functionality. This
 " configuration option turns out not to be necessary for the file named
@@ -116,7 +159,7 @@ set incsearch
 set hlsearch
 
 " Searching 'tags' path
-set tags=./tags;,tags
+set tags=./.tags;,.tags
 
 
 """""""""""""""
@@ -146,12 +189,12 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
 " Automatically closing braces
-inoremap {<CR> {<CR>}<Esc>ko<tab>
-inoremap ( ()<Esc>ha
-inoremap [ []<Esc>ha
-inoremap " ""<Esc>ha
-inoremap ' ''<Esc>ha
-inoremap ` ``<Esc>ha
+" inoremap {<CR> {<CR>}<Esc>ko<tab>
+" inoremap ( ()<Esc>ha
+" inoremap [ []<Esc>ha
+" inoremap " ""<Esc>ha
+" inoremap ' ''<Esc>ha
+" inoremap ` ``<Esc>ha
 
 " mappings for managing tabs
 " map <leader>tn :tabnew<cr>
@@ -174,6 +217,13 @@ inoremap ` ``<Esc>ha
 if &term =~ '256color' && $TMUX != ''
   set t_ut=
 endif
+
+set listchars=tab:▸\ ,trail:·,extends:>,precedes:<,nbsp:·
+if &termencoding ==# 'utf-8' || &encoding ==# 'utf-8'
+    set listchars=tab:⇥\ ,trail:·,extends:⇉,precedes:⇇,nbsp:⚭
+    set fillchars=vert:╎,fold:·
+endif
+set list
 
 
 """""""""""""""""""
@@ -246,3 +296,4 @@ function! MyTabLine()
 endfunction
 
 :highlight TabLineFill term=reverse cterm=none ctermfg=246 ctermbg=251
+
