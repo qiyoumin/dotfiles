@@ -57,7 +57,7 @@ set list
 "-----------------------------------------------------------------------
 
 " colorscheme (delek, peachpuff, desert, ron)
- :colorscheme desert
+:colorscheme desert
 
 "----------------------------------------------------------------------
 " change style

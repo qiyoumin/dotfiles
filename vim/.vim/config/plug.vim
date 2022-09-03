@@ -49,6 +49,8 @@ if index(g:bundle_group, 'basic') >= 0
   " many colorschemes
   Plug 'flazz/vim-colorschemes'
 
+  " git support
+  Plug 'tpope/vim-fugitive'
   " show diff of git/svn in side symbol bar
   Plug 'mhinz/vim-signify'
 
@@ -163,8 +165,6 @@ if index(g:bundle_group, 'ale') >= 0
   let g:ale_c_cppcheck_options = ''
   let g:ale_cpp_cppcheck_options = ''
 
-  let g:airline#extension#ale#enalbed = 1
-
   " linter
   let g:ale_linters = {
                         \ 'c': ['gcc', 'cppcheck'], 
@@ -188,6 +188,19 @@ if index(g:bundle_group, 'airline') >= 0
 
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
+
+" if !exists('g:airline_symbols')
+"   let g:airline_symbols = {}
+" endif
+" let g:airline_left_sep = '▶'
+" let g:airline_left_alt_sep = '❯'
+" let g:airline_right_sep = '◀'
+" let g:airline_right_alt_sep = '❮'
+" let g:airline_symbols.linenr = '¶'
+" let g:airline_symbols.branch = '⎇'
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'default'
 
   " let g:airline_left_sep = ''
   " let g:airline_left_alt_sep = ''
