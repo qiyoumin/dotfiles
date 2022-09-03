@@ -35,6 +35,7 @@ set wildmenu
 set wildmode=list:longest
 
 " display cursor line
+autocmd BufEnter,WinEnter * set cursorline
 autocmd InsertLeave,WinEnter * set cursorline
 autocmd InsertEnter,WinLeave * set nocursorline
 
