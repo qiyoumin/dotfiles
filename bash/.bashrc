@@ -21,7 +21,7 @@ alias ls='ls --color=auto'
 alias ll='ls -lrh'
 alias lla='ll -a'
 
-_bashrc_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+_bashrc_dir="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 
 # git autocompletion
 if [ -f /usr/share/bash-completion/completions/git ]; then
@@ -31,7 +31,7 @@ fi
 
 # WSL-specific shell adjustments live in a dedicated file.
 if grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null; then
-  if [ -f "${_bashrc_dir}/wsl.bashrc" ]; then
-    . "${_bashrc_dir}/wsl.bashrc"
+  if [ -f "${_bashrc_dir}/.bashrc.d/wsl.bashrc" ]; then
+    . "${_bashrc_dir}/.bashrc.d/wsl.bashrc"
   fi
 fi

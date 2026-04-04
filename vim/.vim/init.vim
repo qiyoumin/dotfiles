@@ -12,11 +12,9 @@ let s:home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 " load file defining a command
 command! -nargs=1 LoadScript exec 'so '.s:home.'/'.'<args>'
 
-" add init.vim directory to runtimePath
-exec 'set rtp+='.s:home
-
-" add ~/.vim to runtimePath
-set rtp+=~/.vim
+" add the repo-managed runtime directory so autoload/colors/plugins resolve
+execute 'set runtimepath^=' . fnameescape(s:home)
+execute 'set packpath^=' . fnameescape(s:home)
 
 "-----------------------------------------------------------------------
 " load modules
@@ -39,4 +37,3 @@ LoadScript config/style.vim
 
 " load plug config
 LoadScript config/plug.vim
-
