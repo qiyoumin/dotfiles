@@ -29,9 +29,13 @@ if [ -f /usr/share/bash-completion/completions/git ]; then
 fi
 
 
-# WSL-specific shell adjustments live in a dedicated file.
-if grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null; then
-  if [ -f "${_bashrc_dir}/.bashrc.d/wsl.bashrc" ]; then
-    . "${_bashrc_dir}/.bashrc.d/wsl.bashrc"
+for _bashrc_fragment in "${_bashrc_dir}"/.bashrc.d/*.bashrc; do
+  if [ -f "$_bashrc_fragment" ]; then
+    . "$_bashrc_fragment"
   fi
+done
+unset _bashrc_fragment
+
+if [ -f "$HOME/.bashrc.local" ]; then
+  . "$HOME/.bashrc.local"
 fi

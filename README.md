@@ -5,6 +5,7 @@ This repository manages shell and editor config with `GNU Stow`.
 Only the required entry files are linked into `$HOME`:
 
 - `~/.bashrc`
+- `~/.zshrc`
 - `~/.gitconfig`
 - `~/.vimrc`
 - `~/.tmux.conf`
@@ -12,6 +13,19 @@ Only the required entry files are linked into `$HOME`:
 Platform-specific fragments stay inside this repository and are loaded by the
 entry files. For example, WSL-specific Bash settings live in
 `bash/.bashrc.d/wsl.bashrc`.
+
+Machine-local overrides are not stored in this repository. Instead, the managed
+entry files load optional local files from `$HOME` when present:
+
+- `~/.bashrc.local`
+- `~/.zshrc.local`
+- `~/.gitconfig.local`
+
+Example templates for those local files live in:
+
+- `bash/.bashrc.local.example`
+- `zsh/.zshrc.local.example`
+- `git/.gitconfig.local.example`
 
 ## Requirements
 
@@ -23,6 +37,17 @@ Apply the configuration:
 
 ```bash
 ./setup_all.sh
+```
+
+The installer auto-detects your default login shell and installs either the
+`bash` or `zsh` package together with the shared `git`, `vim`, and `tmux`
+packages.
+
+Override shell selection explicitly when needed:
+
+```bash
+./setup_all.sh --shell bash
+./setup_all.sh --shell zsh
 ```
 
 The installer now runs in stages:
@@ -39,6 +64,7 @@ Preview changes without creating links:
 
 ```bash
 ./setup_all.sh --dry-run
+./setup_all.sh --dry-run --shell zsh
 ```
 
 Run checks only:
@@ -76,6 +102,8 @@ if you want to inspect or restore them yourself later.
 
 - `bash/.bashrc`: main Bash entry point
 - `bash/.bashrc.d/`: Bash fragments such as WSL-specific settings
+- `zsh/.zshrc`: main Zsh entry point
+- `zsh/.zshrc.d/`: Zsh fragments such as WSL-specific settings
 - `git/.gitconfig`: Git config
 - `tmux/.tmux.conf`: tmux config
 - `vim/.vimrc` and `vim/.vim/`: Vim config

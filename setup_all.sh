@@ -2,13 +2,7 @@
 
 set -eEuo pipefail
 
-PROGRAMS=(bash git vim tmux)
-ENTRY_PATHS=(
-  "$HOME/.bashrc"
-  "$HOME/.gitconfig"
-  "$HOME/.vimrc"
-  "$HOME/.tmux.conf"
-)
+BASE_PROGRAMS=(git vim tmux)
 LEGACY_PATHS=(
   "$HOME/.vim"
 )
@@ -16,9 +10,12 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 dry_run=0
 check_only=0
+selected_shell=""
 backup_dir=""
 rollback_enabled=0
 rollback_in_progress=0
+PROGRAMS=()
+ENTRY_PATHS=()
 configured_programs=()
 restored_paths=()
 
@@ -32,24 +29,36 @@ warn() {
 
 usage() {
   cat <<'EOF'
-Usage: ./setup_all.sh [--dry-run|-n] [--check]
+Usage: ./setup_all.sh [--dry-run|-n] [--check] [--shell bash|zsh]
 
 Options:
   --dry-run, -n  Preview changes without modifying $HOME.
   --check        Run dependency and stow preflight checks only.
+  --shell        Override automatic shell selection.
 EOF
 }
 
-for arg in "$@"; do
-  case "$arg" in
+while [ "$#" -gt 0 ]; do
+  case "$1" in
     --dry-run|-n)
       dry_run=1
+      shift
       ;;
     --check)
       check_only=1
+      shift
+      ;;
+    --shell)
+      if [ "$#" -lt 2 ]; then
+        echo "Missing value for --shell. Use bash or zsh." >&2
+        usage >&2
+        exit 1
+      fi
+      selected_shell="$2"
+      shift 2
       ;;
     *)
-      echo "Unknown argument: $arg" >&2
+      echo "Unknown argument: $1" >&2
       usage >&2
       exit 1
       ;;
@@ -61,6 +70,60 @@ if [ "$dry_run" -eq 1 ] && [ "$check_only" -eq 1 ]; then
   usage >&2
   exit 1
 fi
+
+resolve_login_shell_path() {
+  local shell_path=""
+
+  if command -v getent >/dev/null 2>&1; then
+    shell_path="$(getent passwd "$USER" | cut -d: -f7)"
+  elif [ -r /etc/passwd ]; then
+    shell_path="$(awk -F: -v user="$USER" '$1 == user { print $7; exit }' /etc/passwd)"
+  elif [ -n "${SHELL:-}" ]; then
+    shell_path="$SHELL"
+  fi
+
+  printf '%s\n' "$shell_path"
+}
+
+resolve_selected_shell() {
+  local shell_name="$selected_shell"
+  local detected_shell=""
+
+  if [ -z "$shell_name" ]; then
+    detected_shell="$(resolve_login_shell_path)"
+    shell_name="$(basename "$detected_shell")"
+  fi
+
+  case "$shell_name" in
+    bash|zsh)
+      printf '%s\n' "$shell_name"
+      ;;
+    *)
+      echo "Unsupported login shell: ${shell_name:-unknown}. Use --shell bash or --shell zsh." >&2
+      exit 1
+      ;;
+  esac
+}
+
+set_managed_paths() {
+  local shell_name="$1"
+
+  PROGRAMS=("${BASE_PROGRAMS[@]}" "$shell_name")
+  ENTRY_PATHS=(
+    "$HOME/.gitconfig"
+    "$HOME/.vimrc"
+    "$HOME/.tmux.conf"
+  )
+
+  case "$shell_name" in
+    bash)
+      ENTRY_PATHS+=("$HOME/.bashrc")
+      ;;
+    zsh)
+      ENTRY_PATHS+=("$HOME/.zshrc")
+      ;;
+  esac
+}
 
 require_command() {
   local command_name="$1"
@@ -205,6 +268,10 @@ run_dry_run() {
   run_dependency_checks
   run_stow_preflight
 }
+
+selected_shell="$(resolve_selected_shell)"
+set_managed_paths "$selected_shell"
+log "Selected shell package: $selected_shell"
 
 if [ "$check_only" -eq 1 ]; then
   run_dependency_checks

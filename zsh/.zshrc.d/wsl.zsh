@@ -2,12 +2,12 @@ if ! grep -qi microsoft /proc/sys/kernel/osrelease 2>/dev/null; then
   return
 fi
 
-# Clash Verge Proxy
+if [ -d /opt/node-v22/bin ] && [[ ":$PATH:" != *":/opt/node-v22/bin:"* ]]; then
+  export PATH="/opt/node-v22/bin:$PATH"
+fi
+
 # Reuse the Windows host address from WSL's resolver so shell tools can route
 # traffic through Clash Verge's local HTTP/SOCKS proxies running on Windows.
-# This assumes Clash Verge is listening on port 7897 and Windows Firewall
-# allows inbound access to that port, for example:
-# netsh advfirewall firewall add rule name="ClashVerge-7897" dir=in action=allow protocol=TCP localport=7897
 proxy_port=7897
 hostip=$(awk '/nameserver/ {print $2}' /etc/resolv.conf 2>/dev/null)
 

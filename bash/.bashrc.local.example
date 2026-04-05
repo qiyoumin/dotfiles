@@ -1,0 +1,10 @@
+# Machine-local Bash overrides live in $HOME/.bashrc.local.
+
+# Example aliases
+# alias gs='git status -sb'
+
+# Example PATH extension
+# export PATH="$HOME/bin:$PATH"
+
+# Example: source a machine-private env file
+# [ -f "$HOME/.config/shell/private-env.sh" ] && . "$HOME/.config/shell/private-env.sh"

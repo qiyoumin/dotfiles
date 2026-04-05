@@ -1,2 +1,3 @@
 ^\.stow-local-ignore$
 \.bashrc\.d
+\.bashrc\.local\.example

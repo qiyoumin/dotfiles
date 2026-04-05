@@ -1,0 +1,10 @@
+[user]
+    name = Your Name
+    email = your.email@example.com
+
+# Example machine-local overrides
+#[commit]
+#    gpgsign = true
+#
+#[credential]
+#    helper = store
