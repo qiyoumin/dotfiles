@@ -73,6 +73,17 @@ Run checks only:
 ./setup_all.sh --check
 ```
 
+Optional bootstrap scripts:
+
+```bash
+./scripts/setup-mirrors-cn.sh --help
+./scripts/setup-mirrors-cn.sh --dry-run --all
+./scripts/setup-mirrors-cn.sh --npm --pip
+```
+
+The mirror setup helper is intentionally separate from `setup_all.sh`. Use it
+only when you want to configure package mirrors on a new machine.
+
 The installer backs up existing entry files into a timestamped
 `dotfile_bk_YYYYMMDDHHMMSS` directory before linking.
 
@@ -107,3 +118,4 @@ if you want to inspect or restore them yourself later.
 - `git/.gitconfig`: Git config
 - `tmux/.tmux.conf`: tmux config
 - `vim/.vimrc` and `vim/.vim/`: Vim config
+- `scripts/setup-mirrors-cn.sh`: optional mirror bootstrap helper
