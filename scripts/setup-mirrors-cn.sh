@@ -5,6 +5,7 @@ set -euo pipefail
 configure_apt=0
 configure_npm=0
 configure_pip=0
+configure_brew=0
 dry_run=0
 
 log() {
@@ -24,13 +25,14 @@ run_cmd() {
 
 usage() {
   cat <<'EOF'
-Usage: ./scripts/setup-mirrors-cn.sh [--apt] [--npm] [--pip] [--all] [--dry-run]
+Usage: ./scripts/setup-mirrors-cn.sh [--apt] [--npm] [--pip] [--brew] [--all] [--dry-run]
 
 Options:
   --apt      Configure the Ubuntu APT mirror.
   --npm      Configure the npm registry mirror.
   --pip      Configure the pip mirror.
-  --all      Configure APT, npm, and pip.
+  --brew     Configure Homebrew bottle and API mirrors.
+  --all      Configure APT, npm, pip, and Homebrew.
   --dry-run  Print actions without making changes.
   --help     Show this help message.
 EOF
@@ -122,6 +124,47 @@ EOF
   fi
 }
 
+homebrew_env_path() {
+  if [ -n "${XDG_CONFIG_HOME:-}" ]; then
+    printf '%s\n' "$XDG_CONFIG_HOME/homebrew/brew.env"
+  else
+    printf '%s\n' "$HOME/.homebrew/brew.env"
+  fi
+}
+
+set_homebrew_env_var() {
+  local env_path="$1"
+  local key="$2"
+  local value="$3"
+  local env_dir=""
+  local temp_path=""
+
+  if [ "$dry_run" -eq 1 ]; then
+    printf '[dry-run] set %s=%s in %s\n' "$key" "$value" "$env_path"
+    return
+  fi
+
+  env_dir="$(dirname "$env_path")"
+  mkdir -p "$env_dir"
+  temp_path="$(mktemp)"
+
+  if [ -f "$env_path" ]; then
+    grep -v "^${key}=" "$env_path" > "$temp_path"
+  fi
+
+  printf '%s=%s\n' "$key" "$value" >> "$temp_path"
+  mv "$temp_path" "$env_path"
+}
+
+configure_brew_mirror() {
+  local env_path=""
+
+  log "Configuring the Homebrew mirror."
+  env_path="$(homebrew_env_path)"
+  set_homebrew_env_var "$env_path" HOMEBREW_API_DOMAIN https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api
+  set_homebrew_env_var "$env_path" HOMEBREW_BOTTLE_DOMAIN https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --apt)
@@ -136,10 +179,15 @@ while [ "$#" -gt 0 ]; do
       configure_pip=1
       shift
       ;;
+    --brew)
+      configure_brew=1
+      shift
+      ;;
     --all)
       configure_apt=1
       configure_npm=1
       configure_pip=1
+      configure_brew=1
       shift
       ;;
     --dry-run)
@@ -158,8 +206,8 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ "$configure_apt" -eq 0 ] && [ "$configure_npm" -eq 0 ] && [ "$configure_pip" -eq 0 ]; then
-  echo "Choose at least one target: --apt, --npm, --pip, or --all." >&2
+if [ "$configure_apt" -eq 0 ] && [ "$configure_npm" -eq 0 ] && [ "$configure_pip" -eq 0 ] && [ "$configure_brew" -eq 0 ]; then
+  echo "Choose at least one target: --apt, --npm, --pip, --brew, or --all." >&2
   usage >&2
   exit 1
 fi
@@ -174,6 +222,10 @@ fi
 
 if [ "$configure_pip" -eq 1 ]; then
   configure_pip_mirror
+fi
+
+if [ "$configure_brew" -eq 1 ]; then
+  configure_brew_mirror
 fi
 
 log "Mirror setup completed."
