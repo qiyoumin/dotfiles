@@ -1,6 +1,3 @@
-# set the keybindings to vi mode.
-bindkey -v
-
 function git_branch() {
   local branch
   branch="$(git branch 2>/dev/null | sed -n 's/^\* //p')"
@@ -23,10 +20,17 @@ alias lla='ll -a'
 
 _zshrc_dir="${${(%):-%N}:A:h}"
 
-for _zsh_fragment in "$_zshrc_dir"/.zshrc.d/*.zsh(.N); do
-  . "$_zsh_fragment"
+_zsh_fragments=(
+  "$_zshrc_dir/.zshrc.d/oh-my-zsh.zsh"
+  "$_zshrc_dir/.zshrc.d/dev-tools.zsh"
+  "$_zshrc_dir/.zshrc.d/aliases.zsh"
+  "$_zshrc_dir/.zshrc.d/wsl.zsh"
+)
+
+for _zsh_fragment in "${_zsh_fragments[@]}"; do
+  [ -r "$_zsh_fragment" ] && . "$_zsh_fragment"
 done
-unset _zsh_fragment
+unset _zsh_fragment _zsh_fragments
 
 if [ -f "$HOME/.zshrc.local" ]; then
   . "$HOME/.zshrc.local"
