@@ -1,3 +1,4 @@
 ^\.stow-local-ignore$
 \.gitignore
+\.DS_Store
 \.vim
