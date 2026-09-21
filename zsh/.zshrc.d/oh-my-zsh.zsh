@@ -12,7 +12,19 @@ fi
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 # ZSH_THEME="random"
-ZSH_THEME="${ZSH_THEME:-apple}"
+if [[ -z "${ZSH_THEME:-}" ]]; then
+  case "$OSTYPE" in
+    darwin*)
+      ZSH_THEME="apple"
+      ;;
+    linux*)
+      ZSH_THEME="gnzh"
+      ;;
+    *)
+      ZSH_THEME="robbyrussell"
+      ;;
+  esac
+fi
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
